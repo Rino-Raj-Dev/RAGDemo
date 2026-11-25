@@ -1,0 +1,81 @@
+EVIDENCE - CF SUMMIT 2026 DOCUMENT LAB
+Open http://127.0.0.1:8500/cfsummit2026/index.cfm
+
+START
+1. Click Build knowledge index. All 8 PDFs are parsed and split into sections.
+2. Embedded all-MiniLM-L6-v2 creates real 384-dimensional embeddings locally.
+3. The immutable in-memory index stores vectors, text and trusted manifest metadata.
+4. Restarting the application loses this derived index; rebuild before presenting.
+
+PDF PIPELINE
+The app tries native documentService() loading first. Section labels from the
+curated corpus identify boundaries even when native extraction flattens lines;
+punctuation spacing is normalized. Passage bodies use the parsed PDF text.
+If native loading is unavailable, a SHA-256-verified text snapshot is used.
+Changed PDFs are rejected on that fallback path. Refresh the heading map if
+headings change. The index banner states which loading mode is in use.
+
+ColdFusion requires documentaccesspaths in cfusion/lib/pathfilter.json to allow
+C:/ColdFusion2025/cfusion/wwwroot/cfsummit2026/assets/**;
+Preserve other allowlist entries. A server restart may be necessary to load it.
+The native simpleRAG button requires successful native PDF loading plus a model.
+
+PRESENTATION FLOW
+Search lab: compare literal keyword, semantic cosine similarity and hybrid RRF.
+Answer lab: inspect context, optionally connect an LLM and generate a cited answer.
+Trust lab: all-year baseline versus date-applicable hybrid retrieval.
+Knowledge corpus: view PDFs and compare fixed cuts against section-aware chunks.
+Evaluation: run labeled retrieval tests and export actual JSON results.
+
+TEST POLICY DATES
+2022-06-01 -> EQ-2022-001, reporting within 72 hours.
+2024-06-01 -> EQ-2023-004, reporting within 72 hours.
+2026-11-10 -> EQ-2026-007, reporting within 24 hours.
+The conflict fixture adds TR-2026-099, a 48-hour rule with no supplied resolution.
+
+MODEL CONNECTION
+Default is evidence-only; no external generation call is made.
+Use Model connection to configure OpenAI or local Ollama per browser session.
+Enter a model supported by your provider. OpenAI requires an API key.
+The application does not persist keys to disk, return them or log provider errors.
+Native model options disable request/response logging.
+Ollama is fixed to http://127.0.0.1:11434 and must already have the chosen model.
+Do not enter secrets into source files or chat.
+
+WHAT IS CUSTOM
+Literal token keyword scoring, exact in-memory cosine scanning, rank fusion
+(RRF k=60), policy-date eligibility, tenant checks, evidence UI and evaluation
+are application code, not automatic simpleRAG defaults. This is intentionally
+small-corpus exact retrieval, not a production ANN index or full-text engine.
+No reranker is claimed. Application gates for numeric limits, conflict fixtures,
+live data and relevance are explicitly labeled; they are not a general-purpose
+answerability or contradiction model.
+
+BOUNDARIES
+Local-only CF endpoints. Persona selection simulates a user in the server session;
+it is not authentication. Different tabs in the same browser share a session.
+Use another browser profile or private window for a separate persona session.
+Tenant eligibility precedes vector scoring and model context construction.
+The source.cfm viewer independently checks the persona. Original synthetic PDF
+assets are still static files under wwwroot and can be fetched directly. Do not
+present this arrangement as production document access control.
+The snapshot is an abort-protected CFM resource. The app also denies CF requests
+under its WEB-INF path; there is no raw JSON snapshot exposed.
+There is no conversation memory: each question is stateless, avoiding history
+carryover. Switching persona clears visible results.
+
+EVALUATION
+Suite measures expected passage hits at Top 5, tenant scope, explicit gate state
+and measured elapsed milliseconds. It does not score generated answer accuracy,
+groundedness, claim support, business value or monetary cost. Citation checking
+only verifies IDs resolve to selected context, not that each claim is supported.
+Results include failures; the baseline is never forced to fail.
+
+NO DATABASE FEATURES
+Live assigned devices, stock and approval status are deliberately unavailable.
+The app reports that a live-data tool is needed when those facts are requested.
+
+CODEMAX GATEWAY
+The default connection now reads CodeMax settings from the private server .env.
+See CODEMAX-SETUP.txt. Existing session-based provider choices remain available.
+No external request occurs until Test connection or a generated-answer call.

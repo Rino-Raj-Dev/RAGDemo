@@ -1,0 +1,54 @@
+CODEMAX GATEWAY CONNECTION
+
+Private configuration file:
+C:\ColdFusion2025\cfusion\cfsummit2026-config\.env
+
+Set CODEMAX_API_KEY to your CodeMax key. Save the file. Do not add the key to
+source code or chat. The file is outside wwwroot, so it is not a static web asset.
+An existing .env is preserved during installation.
+
+CODEMAX_BASE_URL=https://api.codemax.pro
+CODEMAX_MODEL=claude-sonnet-5-5
+CODEMAX_MAX_TOKENS=1024
+
+The model is a gateway alias documented by CodeMax, not a claim about verified
+upstream model identity. Choose a model enabled for your gateway key.
+
+IN THE DEMO
+1. Refresh index.cfm after this application update.
+2. Open Model connection.
+3. Select CodeMax / Claude-compatible gateway (.env).
+4. Click Refresh from .env.
+5. Click Test connection. This sends one tiny test prompt to CodeMax.
+6. Close the dialog and use Answer lab to retrieve evidence and generate guidance.
+
+The .env is read on demand; key or model changes need no ColdFusion restart.
+CodeMax credentials are never accepted from browser form input, stored in the
+session, returned by status endpoints, or included in application logs.
+Application-level request/response logging is disabled for model clients.
+The native Anthropic client uses x-api-key and anthropic-version: 2023-06-01.
+Its base URL must end in /v1/; it appends messages. The resulting endpoint is:
+https://api.codemax.pro/v1/messages
+
+This connection uses ColdFusion ChatModel(provider='anthropic') with a custom
+base URL. The native simpleRAG example uses that same model connection.
+Search, local embeddings, tenant/date filtering and evidence inspection remain
+local. Generated-answer prompts and selected evidence are sent to CodeMax.
+No CodeMax installer or global Claude/VS Code configuration is needed.
+
+ENV SYNTAX
+One NAME=value per line; blank lines and lines starting with # are ignored.
+Single or double quotes may surround a value. Optional export NAME=value works.
+Values are literal: no shell evaluation, substitutions or inline comment parsing.
+Duplicate known settings are rejected. CODEMAX_BASE_URL is restricted to the
+documented CodeMax HTTPS host. Key rotation takes effect on the next model call.
+
+TROUBLESHOOTING
+Missing key: add CODEMAX_API_KEY and refresh.
+Authentication/access: check gateway key and account access.
+Credits/quota/rate limit: check the CodeMax account.
+Unknown model: verify CODEMAX_MODEL against the gateway's available models.
+Timeout/network: check CodeMax availability and ColdFusion outbound access.
+Provider errors are classified; raw errors and secrets are not sent to the UI.
+
+Reference: https://www.codemax.pro/docs
